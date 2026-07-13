@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Preview Images</title>
+<style>
+  :root{
+    --purple:#4000FF;
+    --card-bg:#E8E4E4;
+    --dropzone-bg:#FAFDFF;
+    --dropzone-border:#E4EDF4;
+    --line:#CFD6DD;
+    --input-border:#F0F2F5;
+    --gray-icon:#808792;
+    --gray-text:#6E727A;
+    --gray-text-2:#6B7987;
+    --gray-text-3:#616972;
+    --gray-placeholder:#808792;
+    --cancel-border:#EAECEF;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+    background:#ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  /* Full-viewport wrapper that centers the card on every screen size */
+  .frame{
+    min-height:100vh;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  /* ===== Modal card ===== */
+  .card{
+    position:relative;
+    width:100%;
+    max-width:405px;
+    background:var(--card-bg);
+    border-radius:12px;
+    padding:20px 16px 16px;
+  }
+
+  .card-title{
+    font-size:16px;
+    font-weight:700;
+    color:#000000;
+    line-height:20px;
+    padding-right:28px;
+  }
+
+  .close-btn{
+    position:absolute;
+    right:16px;
+    top:17px;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:rgba(128,135,146,0.1);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .close-btn svg{ width:11px; height:11px; }
+
+  /* ===== Dropzone ===== */
+  .dropzone{
+    margin-top:20px;
+    width:100%;
+    min-height:110px;
+    background:var(--dropzone-bg);
+    border:1px dashed var(--dropzone-border);
+    border-radius:5.5px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    text-align:center;
+    padding:16px;
+  }
+
+  .dropzone .upload-icon{
+    width:21px;
+    height:21px;
+    color:var(--gray-icon);
+    flex-shrink:0;
+  }
+
+  .dropzone .main-text{
+    font-size:13px;
+    font-weight:600;
+    color:#000000;
+  }
+  .dropzone .main-text a{
+    color:var(--purple);
+    text-decoration:none;
+    font-weight:600;
+  }
+
+  .dropzone .sub-text{
+    font-size:11px;
+    color:var(--gray-text-3);
+  }
+
+  /* ===== OR divider ===== */
+  .divider{
+    margin-top:20px;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .divider .line{
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .divider .or-text{
+    padding:0 10px;
+    font-size:10px;
+    letter-spacing:0.02em;
+    color:var(--gray-text);
+    white-space:nowrap;
+  }
+
+  /* ===== Import from URL ===== */
+  .url-label{
+    margin-top:14px;
+    font-size:13px;
+    font-weight:600;
+    color:#000000;
+  }
+
+  .url-box{
+    margin-top:10px;
+    width:100%;
+    min-height:48px;
+    background:#ffffff;
+    border:1px solid var(--input-border);
+    border-radius:5.5px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:0 16px;
+  }
+  .url-box .placeholder{
+    font-size:13px;
+    color:var(--gray-placeholder);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .url-box .upload-link{
+    font-size:13px;
+    color:var(--gray-icon);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+
+  /* ===== Footer row ===== */
+  .footer{
+    margin-top:34px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  /* ===== Help center chip ===== */
+  .help-chip{
+    height:21px;
+    padding:0 10px;
+    background:#ffffff;
+    border-radius:4px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .help-chip svg{ width:15px; height:14px; color:#616972; flex-shrink:0; }
+  .help-chip span{
+    font-size:12px;
+    color:#616972;
+  }
+
+  /* ===== Buttons ===== */
+  .footer-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:auto;
+  }
+
+  .cancel-btn{
+    height:39px;
+    padding:0 20px;
+    background:#ffffff;
+    border:1px solid var(--cancel-border);
+    border-radius:3.5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    font-weight:600;
+    color:var(--gray-text-2);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+
+  .import-btn{
+    height:40px;
+    padding:0 20px;
+    background:var(--purple);
+    border:none;
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    font-weight:700;
+    color:#ffffff;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+
+  /* ===== Small screens ===== */
+  @media (max-width: 480px){
+    .frame{ padding:16px; }
+    .card{ padding:18px 14px 14px; }
+    .footer{
+      flex-direction:column;
+      align-items:stretch;
+      margin-top:24px;
+    }
+    .help-chip{ align-self:flex-start; }
+    .footer-actions{
+      margin-left:0;
+      width:100%;
+    }
+    .cancel-btn, .import-btn{ flex:1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="card">
+
+    <div class="card-title">Add Preview Images!</div>
+
+    <div class="close-btn">
+      <svg viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 1L7 7M7 1L1 7" stroke="#808792" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="dropzone">
+      <svg class="upload-icon" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.5 15V9L5.5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7.5 9L9.5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20.5 8V13C20.5 18 18.5 20 13.5 20H7.5C2.5 20 0.5 18 0.5 13V7C0.5 2 2.5 0 7.5 0H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20.5 8H16.5C13.5 8 12.5 7 12.5 4V0L20.5 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="main-text">Drag &amp; Drop or <a href="#">Choose file</a> to upload</div>
+      <div class="sub-text">fig, zip, pdf, png, jpeg</div>
+    </div>
+
+    <div class="divider">
+      <span class="line"></span>
+      <span class="or-text">OR</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="url-label">Import from URL</div>
+
+    <div class="url-box">
+      <span class="placeholder">Add file URL</span>
+      <span class="upload-link">Upload</span>
+    </div>
+
+    <div class="footer">
+      <div class="help-chip">
+        <svg viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="7.5" cy="7" r="6.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M6 5.5C6 4.7 6.7 4 7.5 4C8.3 4 9 4.7 9 5.5C9 6.2 8.4 6.5 8.1 6.7C7.8 6.9 7.5 7 7.5 7.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+          <circle cx="7.5" cy="9.3" r="0.4" fill="currentColor"/>
+        </svg>
+        <span>Help Center</span>
+      </div>
+
+      <div class="footer-actions">
+        <div class="cancel-btn">Cancel</div>
+        <div class="import-btn">Import</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
